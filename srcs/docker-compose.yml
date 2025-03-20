@@ -1,0 +1,54 @@
+name : inception
+services:
+  nginx:
+    image: nginx
+    container_name: nginx_container
+    build:
+      context: requirements/nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - wordpress
+    env_file: .env
+    volumes:
+      - wordpress_data:/var/www/wordpress
+    networks:
+      - inception
+    tty: true
+
+  wordpress:
+      image: wordpress
+      container_name: wordpress_container
+      build:
+        context: requirements/wordpress
+        dockerfile: Dockerfile
+      expose:
+        - 9000
+      # depends_on:
+      #   - mariadb
+      tty: true
+      env_file: .env
+      volumes:
+        - wordpress_data:/var/www/wordpress
+      networks:
+        - inception
+  
+    
+networks:
+  inception:
+    driver: bridge
+
+volumes:
+  mariadb_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sumseo/data/mariadb_data
+      o: bind
+  wordpress_data:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/sumseo/data/wordpress_data
+      o: bind
