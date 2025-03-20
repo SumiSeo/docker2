@@ -2,7 +2,7 @@ FROM php:7.4-fpm
 
 RUN apt-get update && \
     apt-get install -y vim mariadb-client wget curl libpng-dev libjpeg-dev libfreetype6-dev && \
-    docker-php-ext-install mysqli pdo pdo_mysql gd
+    docker-php-ext-install mysqli pdo pdo_mysql gd 
 
 RUN wget https://wordpress.org/latest.tar.gz && \
     mkdir -p /var/www && \
@@ -20,4 +20,8 @@ RUN wget https://github.com/vrana/adminer/releases/download/v4.8.1/adminer-4.8.1
 
 EXPOSE 9000
 
+COPY www.conf /etc/php/7.4/fpm/pool.d/.
+
+
 CMD ["php-fpm", "-F"]
+# CMD ["./script.sh"]
