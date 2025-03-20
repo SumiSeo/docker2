@@ -1,5 +1,22 @@
 name : inception
 services:
+
+  mariadb:
+      image: mariadb
+      container_name: mariadb_container
+      build:
+        context: requirements/mariadb
+        dockerfile: Dockerfile
+      expose:
+        - 3306
+      env_file: .env
+      restart: on-failure
+      volumes:
+        - mariadb_data2:/var/lib/mysql
+      networks:
+        - inception
+      tty: true
+      
   nginx:
     image: nginx
     container_name: nginx_container
@@ -25,8 +42,8 @@ services:
         dockerfile: Dockerfile
       expose:
         - 9000
-      # depends_on:
-      #   - mariadb
+      depends_on:
+        - mariadb
       tty: true
       env_file: .env
       volumes:
@@ -40,11 +57,11 @@ networks:
     driver: bridge
 
 volumes:
-  mariadb_data:
+  mariadb_data2:
     driver: local
     driver_opts:
       type: none
-      device: /home/sumseo/data/mariadb_data
+      device: /home/sumseo/data/mariadb_data2
       o: bind
   wordpress_data:
     driver: local
