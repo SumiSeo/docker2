@@ -10,7 +10,7 @@ all : $(ENV) $(VOLUMES)
 	@docker compose -f srcs/docker-compose.yml up -d --build
 
 $(ENV):
-		@cp local.env srcs/.env
+		@cp .env srcs/.env
 
 $(VOLUMES):
 		@mkdir -p $(VOLUMES)
