@@ -1,14 +1,27 @@
 #!/bin/bash
 
+SECONDS=0
+while ! mysqladmin ping -h mariadb --silent; do
+	echo "Waiting for MariaDB to start... ${SECONDS} seconds elapsed"
+	sleep 1
+done
+
+# wait for the wordpress database to be accessible
+until echo "SHOW DATABASES;" | mysql -h mariadb -u"$DB_ADMIN_NAME" -p"$DB_ADMIN_PWD" | grep -q "$DB_NAME"; do
+	echo "Waiting for WordPress database to be accessible... ${SECONDS} seconds elapsed"
+	sleep 1
+done
+
 wp config create	--allow-root \
 					--dbname="$DB_NAME" \
 					--dbuser="$DB_ADMIN_NAME" \
 					--dbpass="$DB_ADMIN_PWD" \
 					--dbhost=mariadb \
-					--path=/var/www/wordpress
+					--path=/var/www/wordpress \
+                    --force
 
 wp core install --allow-root \
-				--url=https://$DOMAIN/ \
+				--url=http://$DOMAIN/ \
 				--title=$WP_TITLE \
 				--admin_user=$DB_ADMIN_NAME \
 				--admin_password=$DB_ADMIN_PWD \

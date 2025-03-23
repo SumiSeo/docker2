@@ -18,7 +18,8 @@ RUN apt-get install -y \
     sendmail \
     vim \
     wget \
-    curl
+    curl \
+    mariadb-client
 
 RUN apt-get clean
 
