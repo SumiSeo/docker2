@@ -1,6 +1,5 @@
 FROM debian:bullseye
 
-# Install necessary dependencies for adding the PHP repository
 RUN apt-get update -y && \
     apt-get install -y \
     lsb-release \
@@ -10,7 +9,6 @@ RUN apt-get update -y && \
     curl -sS https://packages.sury.org/php/README.txt | bash - && \
     apt-get update -y
 
-# Install PHP 7.4, PHP-FPM, and other necessary PHP extensions
 RUN apt-get install -y \
     php7.4-fpm \
     php7.4-cli \
@@ -22,14 +20,21 @@ RUN apt-get install -y \
     wget \
     curl
 
-# Clean up unnecessary packages
 RUN apt-get clean
 
+RUN wget https://wordpress.org/latest.tar.gz && \
+	mkdir -p /var/www && \
+	tar -xzf latest.tar.gz -C /var/www && \
+	rm latest.tar.gz && \
+	chmod -R 755 /var/www/wordpress && \
+	chown -R root:root /var/www/wordpress
 
-# Copy the www.conf file to the container
-# COPY www.conf /etc/php/7.4/fpm/pool.d/
+WORKDIR /var/www/wordpress
+RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+	chmod +x wp-cli.phar && \ 
+	mv wp-cli.phar /usr/local/bin/wp
 
-# COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
-# RUN chmod +x /usr/local/bin/entrypoint.sh
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# ENTRYPOINT [ "entrypoint.sh" ]
+ENTRYPOINT [ "entrypoint.sh" ]

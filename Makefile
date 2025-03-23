@@ -24,13 +24,14 @@ clean: down
 		@docker container prune -f
 
 fclean: clean
+		docker volume prune -f
 		@docker rmi $$(docker images -q)
 		@docker system prune -f
 		@docker compose -f srcs/docker-compose.yml down -v
 		@rm -f srcs/.env
 
-erase_data:
-	@sudo rm -rf $(DATA)
+erase:
+	@rm -rf $(DATA)
 
 re: fclean all
 
