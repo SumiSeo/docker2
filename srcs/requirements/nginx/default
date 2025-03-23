@@ -39,6 +39,7 @@ server {
 	# include snippets/snakeoil.conf;
 
 	root /var/www/wordpress;
+	server_name sumseo.42.fr;
 
 	# Add index.php to the list if you are using PHP
 	index index.php index.html index.htm index.nginx-debian.html;
@@ -52,17 +53,15 @@ server {
 	}
 
 	# pass PHP scripts to FastCGI server
-	#
-	location ~ \.php$ {
+	# if request ends with .php do like below
 	location ~ \.php$ {
 		include snippets/fastcgi-php.conf;
 	
 		# With php-fpm (or other unix sockets):
 		# fastcgi_pass unix:/run/php/php7.4-fpm.sock;
 		# With php-cgi (or other tcp sockets):
+		# php request will send to wordpress_container
 		fastcgi_pass wordpress_container:9000;
-	}
-		
 	}
 
 	# deny access to .htaccess files, if Apache's document root

@@ -1,28 +1,35 @@
-FROM php:7.4-fpm
+FROM debian:bullseye
 
-RUN apt-get update && \
-    apt-get install -y vim mariadb-client wget curl libpng-dev libjpeg-dev libfreetype6-dev && \
-    docker-php-ext-install mysqli pdo pdo_mysql gd && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# Install necessary dependencies for adding the PHP repository
+RUN apt-get update -y && \
+    apt-get install -y \
+    lsb-release \
+    ca-certificates \
+    apt-transport-https \
+    curl && \
+    curl -sS https://packages.sury.org/php/README.txt | bash - && \
+    apt-get update -y
 
-RUN wget https://wordpress.org/latest.tar.gz && \
-    mkdir -p /var/www/wordpress_data/var/www && \
-    tar -xzf latest.tar.gz -C /var/www/wordpress_data/var/www && \
-    rm latest.tar.gz && \
-    chmod -R 755 /var/www/wordpress_data/var/www/wordpress && \
-    chown -R www-data:www-data /var/www/wordpress_data/var/www/wordpress
+# Install PHP 7.4, PHP-FPM, and other necessary PHP extensions
+RUN apt-get install -y \
+    php7.4-fpm \
+    php7.4-cli \
+    php7.4-mysql \
+    php7.4-mbstring \
+    php7.4-xml \
+    sendmail \
+    vim \
+    wget \
+    curl
 
-WORKDIR /var/www/wordpress
+# Clean up unnecessary packages
+RUN apt-get clean
 
 
-RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
-    chmod +x wp-cli.phar && \
-    mv wp-cli.phar /usr/local/bin/wp
+# Copy the www.conf file to the container
+# COPY www.conf /etc/php/7.4/fpm/pool.d/
 
-COPY www.conf /etc/php/7.4/fpm/pool.d/
+# COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+# RUN chmod +x /usr/local/bin/entrypoint.sh
 
-COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-ENTRYPOINT [ "entrypoint.sh" ]
+# ENTRYPOINT [ "entrypoint.sh" ]
