@@ -1,7 +1,6 @@
 ENV = srcs/.env 
 DATA = /home/sumseo/data
 
-
 VOLUMES = $(DATA)/mariadb_data2 \
 				$(DATA)/wordpress_data
 

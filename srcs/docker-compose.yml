@@ -1,4 +1,3 @@
-name : inception
 services:
 
   mariadb:
