@@ -6,7 +6,8 @@ VOLUMES = $(DATA)/mariadb_data2 \
 
 
 all : $(ENV) $(VOLUMES)
-	@docker compose -f srcs/docker-compose.yml up -d --build
+	@docker compose -f srcs/docker-compose.yml up --build
+#	@docker compose -f srcs/docker-compose.yml up -d --build
 
 $(ENV):
 		@cp .env srcs/.env
